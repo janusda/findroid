@@ -83,8 +83,10 @@ class PlayerActivity : BasePlayerActivity() {
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
+        //
+        binding.progressScrubberLayout.setBackgroundColor(Color.TRANSPARENT)
         binding.playerView.player = viewModel.player
+
         binding.playerView.setControllerVisibilityListener(
             PlayerView.ControllerVisibilityListener { visibility ->
                 if (visibility == View.GONE) {
