@@ -38,10 +38,15 @@ fun bindItemImage(imageView: ImageView, item: FindroidItem) {
 
 fun bindItemBackdropImage(imageView: ImageView, item: FindroidItem?) {
     if (item == null) return
-
-    imageView
-        .loadImage("/items/${item.id}/Images/${ImageType.BACKDROP}")
-        .backdropDescription(item.name)
+    if (item.images.backdrop != null) {
+        imageView
+            .loadImage("/items/${item.id}/Images/${ImageType.BACKDROP}")
+            .backdropDescription(item.name)
+    } else {
+        imageView
+            .loadImage("/items/${item.id}/Images/${ImageType.PRIMARY}")
+            .backdropDescription(item.name)
+    }
 }
 
 fun bindItemBackdropById(imageView: ImageView, itemId: UUID) {
@@ -59,10 +64,18 @@ fun bindCardItemImage(imageView: ImageView, item: FindroidItem) {
         is FindroidMovie -> ImageType.BACKDROP
         else -> ImageType.PRIMARY
     }
+    if (item.images.backdrop == null && imageType == ImageType.BACKDROP) {
+        imageView
+            .loadImage("/items/${item.id}/Images/${ImageType.PRIMARY}")
+            .posterDescription(item.name)
+    } else {
 
-    imageView
-        .loadImage("/items/${item.id}/Images/$imageType")
-        .posterDescription(item.name)
+        imageView
+            .loadImage("/items/${item.id}/Images/$imageType")
+            .posterDescription(item.name)
+    }
+
+
 }
 
 fun bindSeasonPoster(imageView: ImageView, seasonId: UUID) {

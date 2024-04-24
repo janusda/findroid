@@ -222,7 +222,7 @@ class PlayerActivity : BasePlayerActivity() {
 
         val exoPlayerControlView = findViewById<FrameLayout>(R.id.player_controls)
         val lockedLayout = findViewById<FrameLayout>(R.id.locked_player_view)
-
+        exoPlayerControlView.setBackgroundColor(Color.TRANSPARENT)
         lockButton.setOnClickListener {
             exoPlayerControlView.visibility = View.GONE
             lockedLayout.visibility = View.VISIBLE
@@ -258,17 +258,16 @@ class PlayerActivity : BasePlayerActivity() {
         // Set marker color
         val timeBar = binding.playerView.findViewById<DefaultTimeBar>(R.id.exo_progress)
         timeBar.setAdMarkerColor(Color.WHITE)
-
-        if (appPreferences.playerTrickPlay) {
-            val imagePreview = binding.playerView.findViewById<ImageView>(R.id.image_preview)
-            previewScrubListener = PreviewScrubListener(
-                imagePreview,
-                timeBar,
-                viewModel.player,
-            )
-
-            timeBar.addListener(previewScrubListener!!)
-        }
+//        if (appPreferences.playerTrickPlay) {
+//            val imagePreview = binding.playerView.findViewById<ImageView>(R.id.image_preview)
+//            previewScrubListener = PreviewScrubListener(
+//                imagePreview,
+//                timeBar,
+//                viewModel.player,
+//            )
+//
+//            timeBar.addListener(previewScrubListener!!)
+//        }
 
         viewModel.initializePlayer(args.items)
         hideSystemUI()
