@@ -177,17 +177,16 @@ class JellyfinRepositoryImpl(
             }
     }
 
-    override suspend fun getFavoriteItems(): List<FindroidItem> =
+    override suspend fun getFavoriteItems(itemType: BaseItemKind, limit: Int?): List<FindroidItem> =
         withContext(Dispatchers.IO) {
             jellyfinApi.itemsApi.getItems(
                 jellyfinApi.userId!!,
                 filters = listOf(ItemFilter.IS_FAVORITE),
-                includeItemTypes = listOf(
-                    BaseItemKind.MOVIE,
-                    BaseItemKind.SERIES,
-                    BaseItemKind.EPISODE,
-                ),
+                includeItemTypes = listOf(itemType),
                 recursive = true,
+                limit = limit,
+                sortBy = listOf("lastPlayedDate"),
+                sortOrder = listOf(SortOrder.DESCENDING),
             ).content.items
                 .orEmpty()
                 .mapNotNull { it.toFindroidItem(this@JellyfinRepositoryImpl, database) }

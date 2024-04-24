@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jellyfin.sdk.model.api.BaseItemKind
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,46 +42,41 @@ constructor(
         viewModelScope.launch {
             _uiState.emit(UiState.Loading)
             try {
-                val items = jellyfinRepository.getFavoriteItems()
-
+                val movieItems = jellyfinRepository.getFavoriteItems(BaseItemKind.MOVIE, null)
+                val episodeItems = jellyfinRepository.getFavoriteItems(BaseItemKind.EPISODE, 20)
+                val seriesItems = jellyfinRepository.getFavoriteItems(BaseItemKind.SERIES, 20)
                 val favoriteSections = mutableListOf<FavoriteSection>()
-
                 withContext(Dispatchers.Default) {
-                    FavoriteSection(
-                        Constants.FAVORITE_TYPE_MOVIES,
-                        UiText.StringResource(R.string.movies_label),
-                        items.filterIsInstance<FindroidMovie>(),
-                    ).let {
-                        if (it.items.isNotEmpty()) {
-                            favoriteSections.add(
-                                it,
-                            )
-                        }
+                    if (movieItems.isNotEmpty()) {
+                        favoriteSections.add(
+                            FavoriteSection(
+                                Constants.FAVORITE_TYPE_MOVIES,
+                                UiText.StringResource(R.string.movies_label),
+                                movieItems,
+                            ),
+                        )
                     }
-                    FavoriteSection(
-                        Constants.FAVORITE_TYPE_SHOWS,
-                        UiText.StringResource(R.string.shows_label),
-                        items.filterIsInstance<FindroidShow>(),
-                    ).let {
-                        if (it.items.isNotEmpty()) {
-                            favoriteSections.add(
-                                it,
-                            )
-                        }
+
+                    if (seriesItems.isNotEmpty()) {
+                        favoriteSections.add(
+                            FavoriteSection(
+                                Constants.FAVORITE_TYPE_SHOWS,
+                                UiText.StringResource(R.string.shows_label),
+                                seriesItems,
+                            ),
+                        )
                     }
-                    FavoriteSection(
-                        Constants.FAVORITE_TYPE_EPISODES,
-                        UiText.StringResource(R.string.episodes_label),
-                        items.filterIsInstance<FindroidEpisode>(),
-                    ).let {
-                        if (it.items.isNotEmpty()) {
-                            favoriteSections.add(
-                                it,
-                            )
-                        }
+
+                    if (episodeItems.isNotEmpty()) {
+                        favoriteSections.add(
+                            FavoriteSection(
+                                Constants.FAVORITE_TYPE_EPISODES,
+                                UiText.StringResource(R.string.episodes_label),
+                                episodeItems,
+                            ),
+                        )
                     }
                 }
-
                 _uiState.emit(UiState.Normal(favoriteSections))
             } catch (e: Exception) {
                 _uiState.emit(UiState.Error(e))

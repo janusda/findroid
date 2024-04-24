@@ -59,7 +59,7 @@ interface JellyfinRepository {
         recursive: Boolean = true,
     ): List<FindroidItem>
 
-    suspend fun getFavoriteItems(): List<FindroidItem>
+    suspend fun getFavoriteItems(itemType: BaseItemKind, limit: Int? = 20): List<FindroidItem>
 
     suspend fun getSearchItems(searchQuery: String): List<FindroidItem>
 

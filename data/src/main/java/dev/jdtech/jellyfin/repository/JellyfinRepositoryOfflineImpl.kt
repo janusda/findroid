@@ -107,9 +107,10 @@ class JellyfinRepositoryOfflineImpl(
         TODO("Not yet implemented")
     }
 
-    override suspend fun getFavoriteItems(): List<FindroidItem> {
+    override suspend fun getFavoriteItems(itemType: BaseItemKind, limit: Int?): List<FindroidItem> {
         TODO("Not yet implemented")
     }
+
 
     override suspend fun getSearchItems(searchQuery: String): List<FindroidItem> {
         return withContext(Dispatchers.IO) {
