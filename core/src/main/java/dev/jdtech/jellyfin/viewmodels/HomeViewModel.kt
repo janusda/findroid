@@ -91,11 +91,15 @@ class HomeViewModel @Inject internal constructor(
         return items.map { HomeItem.Section(it) }
     }
 
-    private suspend fun loadViews() = repository
-        .getUserViews()
-        .filter { view -> CollectionType.fromString(view.collectionType) in CollectionType.supported }
-        .map { view -> view to repository.getLatestMedia(view.id) }
-        .filter { (_, latest) -> latest.isNotEmpty() }
-        .map { (view, latest) -> view.toView().apply { items = latest } }
-        .map { HomeItem.ViewItem(it) }
+    private suspend fun loadViews(): List<HomeItem.ViewItem> {
+        val userConfiguration = repository.getUserConfiguration()
+        val latestItemsExcludes = userConfiguration?.latestItemsExcludes ?: emptyList()
+        return repository.getUserViews()
+            .filter { view -> CollectionType.fromString(view.collectionType) in CollectionType.supported }
+            .filter { view -> !latestItemsExcludes.contains(view.displayPreferencesId) }
+            .map { view -> view to repository.getLatestMedia(view.id) }
+            .filter { (_, latest) -> latest.isNotEmpty() }
+            .map { (view, latest) -> view.toView().apply { items = latest } }
+            .map { HomeItem.ViewItem(it) }
+    }
 }
