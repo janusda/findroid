@@ -59,8 +59,8 @@ class PlayerGestureHelper(
     private var playbackSpeedIncrease: Float = 2f
     private var lastPlaybackSpeed: Float = 0f
 
-    private val screenWidth = Resources.getSystem().displayMetrics.widthPixels
-    private val screenHeight = Resources.getSystem().displayMetrics.heightPixels
+    private var screenWidth = Resources.getSystem().displayMetrics.widthPixels
+    private var screenHeight = Resources.getSystem().displayMetrics.heightPixels
 
     private var currentNumberOfPointers: Int = 0
 
@@ -453,6 +453,7 @@ class PlayerGestureHelper(
      * Check if [firstEvent] is in the gesture exclusion area
      */
     private fun inExclusionArea(firstEvent: MotionEvent): Boolean {
+        // 获取屏幕方向
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val insets = playerView.rootWindowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemGestures())
 
@@ -477,6 +478,11 @@ class PlayerGestureHelper(
         }
 
         updateZoomMode(appPreferences.playerStartMaximized)
+
+        playerView.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            screenWidth = Resources.getSystem().displayMetrics.widthPixels
+            screenHeight = Resources.getSystem().displayMetrics.heightPixels
+        }
 
         @Suppress("ClickableViewAccessibility")
         playerView.setOnTouchListener { _, event ->
